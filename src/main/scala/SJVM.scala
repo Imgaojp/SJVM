@@ -1,3 +1,5 @@
+import classpath.ClassPath
+
 /**
   * 　　　　　　　　┏┓　　　┏┓+ +
   * 　　　　　　　┏┛┻━━━┛┻┓ + +
@@ -34,8 +36,16 @@ object SJVM {
   }
 
   def StartJvm(cmd: cmdArgs): Unit = {
-    printf("classpath: %s \nclass: %s \nargs: %s \n",
-      cmd.cpOption, cmd.className, cmd.args.mkString(","))
+    val cp = new ClassPath
+    cp parse(cmd.XjreOption, cmd.cpOption)
+    val classData = cp.readClass(cmd.className)
+    if (classData==null) {
+      printf("could not load main class %s\n", cmd.className)
+      System.exit(1)
+    }
+    for (b <- classData){
+      printf("%c\t",b)
+    }
   }
 
 }
